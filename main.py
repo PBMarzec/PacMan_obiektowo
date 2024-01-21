@@ -1,10 +1,7 @@
 import pygame
 from copy import deepcopy
-import Monsters
 import Board
-import Food
-import PacMan
-import Efects
+import Sprites
 
 
 pygame.init()
