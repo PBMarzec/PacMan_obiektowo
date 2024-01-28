@@ -20,13 +20,12 @@ class Board:
         return deepcopy(Map)
     
     def DrowBoard(self):
-        
         pass
     
     def UpdateBoard():
         pass
     
-    def Colitions():
+    def Colitions(self,one_sprite, second_sprite):
         pass
     
     @property
@@ -34,7 +33,13 @@ class Board:
         return self.map[row][col] 
     
 class OneTile:
-    def __init__(self) -> None:
-        self.type = ""
+    def __init__(self,tile_type:str,board_mode="normal") -> None:
+        self.type = tile_type
         self.pic = ""
-        pass
+        self.board_mode = board_mode
+        
+        if self.board_mode == "normal":
+            pass
+        
+        
+        

@@ -9,21 +9,18 @@ class MovebleSprite(ISprites):
     def __init__(self) -> None:
         super().__init__()
     
-    @abstractmethod
     def move(self,vec):
-        pass
-
-class NoneMovebleSprite(ISprites):
-    def __init__(self) -> None:
-        super().__init__()     
+        self.x += vec[0]
+        self.y += vec[1]
+    
       
 class PacMan(MovebleSprite):
     def __init__(self) -> None:
         super().__init__()
         self.live_points = 3
+        self.status = "normal"
         
-    def move(self,vec):
-        pass
+        
     
     
 class Monster(MovebleSprite):
@@ -32,5 +29,11 @@ class Monster(MovebleSprite):
         self.status = "normal"
         self.stategy = "random"
         
-    def move(self,vec):
+    def MoveStrategy(self,vec):
         pass
+    
+    
+
+class NoneMovebleSprite(ISprites):
+    def __init__(self) -> None:
+        super().__init__() 
