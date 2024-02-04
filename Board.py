@@ -25,7 +25,7 @@ class Board:
     def DrowBoard(self):
         pass
     
-    def UpdateBoard():
+    def UpdateBoard(self):
         pass
     
     def Colitions(self,one_sprite, second_sprite):
@@ -37,7 +37,7 @@ class Board:
     
     @property
     def CanIMoveThere(self,x,y):
-        if self.map[x][y] == "wall":
+        if self.map[x][y] == "Wall":
             return False
         else:
             return True

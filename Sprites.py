@@ -46,15 +46,21 @@ class Monster(MovebleSprite):
             if move_is_possible: 
                 possible_directors.append(deepcopy(poss_vec))
         
-        if self.strategy == "random":
-            vec = possible_directors[random.choice(len(possible_directors))]
-        elif self.strategy == "follow":
-            distance_to_pacman = 100
-            for poss_vec in possible_directors:
+        if len(possible_directors)>0:
+            if self.strategy == "random":
+                return possible_directors[random.choice(len(possible_directors))]
+            
+            distance_to_pacman = 1000
+            theshortes_order = [-10,-10]
+            for indexp, poss_vec in enumerate(possible_directors):
                 dist = board.DistanceToPacMan(poss_vec[0],poss_vec[1])
                 if dist < distance_to_pacman:
-                    vec = poss_vec
-        return vec
+                    theshortes_order[1] = theshortes_order[0]
+                    theshortes_order[0] = indexp
+            if self.strategy == "follow":
+                return possible_directors[theshortes_order[0]]  
+            elif self.strategy == "semifollow":
+                return possible_directors[theshortes_order[1]]  
     
     
 
