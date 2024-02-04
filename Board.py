@@ -1,8 +1,11 @@
 from copy import deepcopy
+from pathlib import Path
+import math
 
 class Board:
-    def __init__(self,boardfile:__path__) -> None:
+    def __init__(self,boardfile:Path) -> None:
         self.__map = self.ImportMap(boardfile)
+        self.__PacManPossition = []
     
     TypeOfTiles = {"#":"Wall",
                     "P":"PacMan",
@@ -31,6 +34,18 @@ class Board:
     @property
     def WhatIsHere(self,col,row):
         return self.map[row][col] 
+    
+    @property
+    def CanIMoveThere(self,x,y):
+        if self.map[x][y] == "wall":
+            return False
+        else:
+            return True
+    
+    @property
+    def DistanceToPacMan(self,x,y):
+        distance = math.sqrt((self.__PacManPossition[0]-x)**2+(self.__PacManPossition[1]-y)**2)
+        return distance
     
 class OneTile:
     def __init__(self,tile_type:str,board_mode="normal") -> None:
