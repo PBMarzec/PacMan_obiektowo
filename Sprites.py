@@ -4,9 +4,9 @@ from copy import deepcopy
 import random
 
 class ISprites(ABC):
-    def __init__(self) -> None:
-        self.i = 0
-        self.j = 0
+    def __init__(self,i,j) -> None:
+        self.i = i
+        self.j = j
   
 class MovebleSprite(ISprites):
     def __init__(self) -> None:
@@ -27,15 +27,24 @@ class PacMan(MovebleSprite):
         self.live_points = 3
         self.status = "normal"
         
-        
+    def move_pacman(self,pressed_keys:dict):
+        if pressed_keys[K_UP]:
+            self.move(0, 1)
+        if pressed_keys[K_DOWN]:
+            self.move(0, -1)
+        if pressed_keys[K_LEFT]:
+            self.move(-1, )
+        if pressed_keys[K_RIGHT]:
+            self.move(1, 0)
     
     
 class Monster(MovebleSprite):
-    def __init__(self) -> None:
+    def __init__(self,strategy="random") -> None:
         super().__init__()
         self.status = "normal"
-        self.strategy = "random"
-        
+        self.__strategy = strategy
+        # self.__speed = "normal"
+    
     def MoveStrategy(self,board:Board):
         directors_to_check = [[0,1],[0,-1],[-1,0],[1,0]] # up, down, left, right
         possible_directors = []
@@ -69,11 +78,22 @@ class NoneMovebleSprite(ISprites):
         super().__init__() 
         
 class Booster(NoneMovebleSprite):
-    def __init__(self) -> None:
+    booster_name_list = ["SpeedUpPacman","SickMonster"]
+    def __init__(self, booster_effect_name:str) -> None:
         super().__init__() 
-        self.booster_effect = ""
+        self.__booster_effect = booster_effect_name
+    
+    @property
+    def check_booster_effect(self):
+        return self.__booster_effec
+    
+    def SpeedUpPacman(self,pacman:PacMan):
+        pass
+    
+    def SickMonster(self,monster_set:list[Monster]):
+        pass
         
-class Coins(NoneMovebleSprite):
+class Coin(NoneMovebleSprite):
     def __init__(self) -> None:
         super().__init__() 
-        self.coin_val = 1
+        self.__coin_val = 1

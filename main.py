@@ -4,28 +4,40 @@ import Board
 import Sprites
 
 
-pygame.init()
 
-# Set up the drawing window
-screen = pygame.display.set_mode([500, 500])
 
-# Run until the user asks to quit
-running = True
-while running:
+if __name__ == "__main__":
+    pygame.init()
 
-    # Did the user click the window close button?
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    # Set up the drawing window
+    # screen = pygame.display.set_mode([500, 500])
 
-    # Fill the background with white
-    screen.fill((255, 255, 255))
+    # Run until the user asks to quit
+    running = True
+    PacMan = Sprites.PacMan
+    Map = Board.Board(boardfile="board_1.txt",Pacman=PacMan)
+    Map.DrowBoard()
 
-    # Draw a solid blue circle in the center
-    pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
+    loopcounter = 0
+    while running:
 
-    # Flip the display
-    pygame.display.flip()
+        # Did the user click the window close button?
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-# Done! Time to quit.
-pygame.quit()
+        pressed_keys = pygame.key.get_pressed()
+        PacMan.move_pacman(pressed_keys=pressed_keys)
+        
+        if loopcounter == 10:
+            for monster in Board.Board.monster_list:
+                monster.move(Sprites.Monster.MoveStrategy(self=monster,board=Map))
+            loopcounter = 0
+        else:
+            loopcounter += 1
+        
+        Map.UpdateBoard()
+        Map.DrowBoard()    
+         
+    # Done! Time to quit.
+    pygame.quit()
