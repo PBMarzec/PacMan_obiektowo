@@ -1,64 +1,64 @@
 from copy import deepcopy
 from pathlib import Path
 import math
-# import pygame
+import pygame
 import main
 import Sprites
 import random
 
-class Board:
-    def __init__(self,boardfile:Path,Pacman:Sprites.PacMan) -> None:
-        self.__map = self.ImportMap(boardfile,Pacman)
+pygame.init()
+
+class Board():
+    def __init__(self,map_list:list,Pacman:Sprites.PacMan,screen:pygame) -> None:
+        self.__map = []
+        self.__screen = screen
         self.__PacManPossition = []
         self.__active_monster = []
         self.__active_food = []
         self.__active_coins = []
         self.__Total_points = 0
     
+        self.ImportMap(map_list,Pacman)
     
-    
-    def ImportMap(self,file,pacman:Sprites.PacMan)->list[list]:
+    def ImportMap(self,map_list,pacman:Sprites.PacMan)->list[list]:
         TypeOfTiles = {"#":"Wall",
                     "P":"PacMan",
                     "F":"Food",
                     "M":"Monster",
                     " ":"Coin"}
-        Map = []
-        with open(file, 'r') as mapfile:
-            all_lines = mapfile.readlines()
-            for indexcol, line in enumerate(all_lines):
-                one_line = list(line)
-                one_map_row = []
-                for indexrow, x in enumerate(one_line[:-1]):
-                    one_map_row.append((OneTile(tile_type=TypeOfTiles[x])))
-                    if x == 'M':
-                        self.__active_monster.append((Sprites.Monster(indexrow,
-                                                                              indexcol,
-                                                                              strategy="random")))
-                    elif x == 'P':
-                        self.__PacManPossition = indexrow,indexcol
-                        pacman.i = indexcol
-                        pacman.i = indexrow
-                    elif x == 'F':
-                        self.__active_food.append((Sprites.Booster(indexrow,
-                                                                           indexcol,
-                                                                           random(Sprites.Booster.booster_name_list))))
-                    elif x == ' ':
-                        self.__active_coins.append((Sprites.Coin(indexrow,
-                                                                           indexcol)))
-                Map.append((one_map_row))
-        return (Map)
+        
+        for indexcol, line in enumerate(map_list):
+            one_line = list(line)
+            one_map_row = []
+            for indexrow, x in enumerate(one_line[:-1]):
+                one_map_row.append((OneTile(tile_type=TypeOfTiles[x])))
+                if x == 'M':
+                    self.__active_monster.append((Sprites.Monster(indexrow,
+                                                                            indexcol,
+                                                                            strategy="random")))
+                elif x == 'P':
+                    self.__PacManPossition = indexrow,indexcol
+                    pacman.i = indexcol
+                    pacman.i = indexrow
+                elif x == 'F':
+                    self.__active_food.append((Sprites.Booster(indexrow,
+                                                                        indexcol,
+                                                                        random(Sprites.Booster.booster_name_list))))
+                elif x == ' ':
+                    self.__active_coins.append((Sprites.Coin(indexrow,indexcol)))
+            self.__map.append((one_map_row))
+                
     
     @property
-    def monster_list(self)->list[Sprites.Monster]:
+    def active_monster(self)->list[Sprites.Monster]:
         return self.__active_monster
     
     
     def DrowBoard(self):
-        for indexc, col in enumerate(self.__map):
-            for indexr, row in enumerate(col):
-                main.screen.blit(row.pic,(row,col))
-        
+        for indexr, row in enumerate(self.__map):
+            for indexc, col in enumerate(row):
+                self.__screen.blit(col.pic,(indexc*20,indexr*20))
+        pygame.display.flip()
     
     def UpdateBoard(self):
         pass
@@ -135,16 +135,19 @@ class Board:
                                 second_sprite.__class__.__name__)]
         
     
-    @property
-    def WhatIsHere(self,col,row):
-        return self.map[row][col] 
     
-    @property
+    def WhatIsHere(self,col,row):
+        return self.__map[row][col] 
+    
     def CanIMoveThere(self,x,y):
-        if self.map[x][y] == "Wall":
+        print(f"number of rows: {len(self.__map)}, number of columnes: {len(self.__map[1])}, x: {x}, y: {y}")
+        if 0 <= x < len(self.__map[1]) and  0 <= y < len(self.__map):
+            if self.__map[y-1][x-1] == "Wall":
+                return False
+            else:
+                return True
+        else: 
             return False
-        else:
-            return True
     
     @property
     def DistanceToPacMan(self,x,y):
@@ -158,14 +161,16 @@ class OneTile:
         self.board_mode = board_mode
         
         if self.board_mode == "normal":
-            normal_pic_dict = {"Wall":"pic/normal_wall.jpg",
-                               "PacMan":"pic/normal_pacman.jpg",
-                                "Food":"pic/normal_food.jpg",
-                                "Monster":"pic/normal_monster.jpg",
-                                "Path":"pic/normal_path.jpg",
-                                "Coin":"pic/normal_coin.jpg"}
-            self.pic = main.pygame.image.load(normal_pic_dict[self.type])
- 
+            normal_pic_dict = {"Wall":"./pic/normal_wall.jpg",
+                               "PacMan":"./pic/normal_pacman.jpg",
+                                "Food":"./pic/normal_food.jpg",
+                                "Monster":"./pic/normal_monster.jpg",
+                                "Path":"./pic/normal_path.jpg",
+                                "Coin":"./pic/normal_coin.jpg"}
+            self.pic = pygame.image.load(normal_pic_dict[self.type])
+    
+    def update_pic(self):
+        pass
 
  
         
