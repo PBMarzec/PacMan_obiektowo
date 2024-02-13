@@ -20,7 +20,7 @@ class Board():
     
         self.ImportMap(map_list,Pacman)
     
-    def ImportMap(self,map_list,pacman:Sprites.PacMan)->list[list]:
+    def ImportMap_copy(self,map_list,pacman:Sprites.PacMan)->list[list]:
         TypeOfTiles = {"#":"Wall",
                     "P":"PacMan",
                     "F":"Food",
@@ -47,7 +47,32 @@ class Board():
                 elif x == ' ':
                     self.__active_coins.append((Sprites.Coin(indexrow,indexcol)))
             self.__map.append((one_map_row))
-                
+    
+    def ImportMap(self,map_list,pacman:Sprites.PacMan)->list[list]:
+        
+        
+        for indexcol, line in enumerate(map_list):
+            one_line = list(line)
+            one_map_row = []
+            for indexrow, x in enumerate(one_line[:-1]):
+                one_tile = OneTile(x)
+                one_map_row.append((one_tile))
+                if one_tile.type == 'Monster':
+                    self.__active_monster.append((Sprites.Monster(indexrow,
+                                                                            indexcol,
+                                                                            strategy="random")))
+                elif one_tile.type == 'PacMan':
+                    self.__PacManPossition = indexrow,indexcol
+                    pacman.i = indexcol
+                    pacman.i = indexrow
+                elif one_tile.type == 'Food':
+                    self.__active_food.append((Sprites.Booster(indexrow,
+                                                                        indexcol,
+                                                                        random(Sprites.Booster.booster_name_list))))
+                elif one_tile.type == 'Coin':
+                    self.__active_coins.append((Sprites.Coin(indexrow,indexcol)))
+            self.__map.append((one_map_row))
+                            
     
     @property
     def active_monster(self)->list[Sprites.Monster]:
@@ -154,7 +179,7 @@ class Board():
         distance = math.sqrt((self.__PacManPossition[0]-x)**2+(self.__PacManPossition[1]-y)**2)
         return distance
     
-class OneTile:
+class OneTile_copy:
     def __init__(self,tile_type:str,board_mode="normal") -> None:
         self.type = tile_type
         self.pic = ""
@@ -170,9 +195,94 @@ class OneTile:
             self.pic = pygame.image.load(normal_pic_dict[self.type])
     
     def update_pic(self):
-        pass
+        old_type = self.normal_pic_dict.keys()[self.pic]
+        if old_type != self.type:
+            self.pic = pygame.image.load(self.normal_pic_dict[self.type])
 
  
         
+class OneTile:
+    TypeOfTiles = {"#":"Wall",
+                    "P":"PacMan",
+                    "F":"Food",
+                    "M":"Monster",
+                    " ":"Coin"}
+    normal_pic_dict = {"Wall":"./pic/normal_wall.jpg",
+                        "PacMan":"./pic/normal_pacman.jpg",
+                        "Food":"./pic/normal_food.jpg",
+                        "Monster":"./pic/normal_monster.jpg",
+                        "Path":"./pic/normal_path.jpg",
+                        "Coin":"./pic/normal_coin.jpg"}
+    
+    def __init__(self,tile_string:str,board_mode="normal") -> None:
+        self.type = ""
+        self.pic = ""
+        self.board_mode = board_mode
+        
+        self.type = self.TypeOfTiles[tile_string]
+        self.choose_board_theme_and_pic()  
+        
+     
+    @staticmethod       
+    def choose_pic(pic_type, pic_path):
+        if pic_type == "Wall":
+            return WallPic(pic_type, pic_path)
+        elif pic_type == "PacMan":
+            return PacManPic(pic_type, pic_path)
+        elif pic_type == "Food":
+            return FoodPic(pic_type, pic_path)
+        elif pic_type == "Monster":
+            return MonsterPic(pic_type, pic_path)
+        elif pic_type == "Path":
+            return PathPic(pic_type, pic_path)
+        elif pic_type == "Coin":
+            return CoinPic(pic_type, pic_path)
+        else:
+            print(f"Error - choose_pic function don't know this key {pic_type}")
+            
+    def choose_board_theme_and_pic(self):
+        if self.board_mode == "normal":
+            self.pic = self.choose_pic(self.type,self.normal_pic_dict[self.type])
         
         
+    def update_pic(self):
+        old_type = self.normal_pic_dict.keys()[self.pic]
+        if old_type != self.type:
+            self.choose_board_theme_and_pic()
+
+
+class PictureClass:
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        self.pic = pygame.image.load(pic_path)    
+        
+class WallPic(PictureClass):
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        super().__init__(pic_path)
+                
+class PacManPic(PictureClass):
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        super().__init__(pic_path)
+                
+class FoodPic(PictureClass):
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        super().__init__(pic_path)
+                
+class MonsterPic(PictureClass):
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        super().__init__(pic_path)
+            
+class CoinPic(PictureClass):
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        super().__init__(pic_path)
+                
+class PathPic(PictureClass):
+    def __init__(self,pic_type:str,pic_path:str) -> None:
+        self.type = pic_type
+        super().__init__(pic_path)
+                
