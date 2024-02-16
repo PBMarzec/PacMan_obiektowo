@@ -8,17 +8,18 @@ class ISprites(ABC):
     def __init__(self,i,j) -> None:
         self.i = i
         self.j = j
-        self.old_pos = []
   
 class MovebleSprite(ISprites):
     def __init__(self,x,y) -> None:
         super().__init__(x,y)
+        self.old_pos = []
     
     def move(self,vec,board:Board):
         new_i = self.i + vec[0]
         new_j = self.j + vec[1]
         move_is_possible = board.CanIMoveThere(new_i,new_j)
         if move_is_possible:
+            self.old_pos = deepcopy[self.i, self.j]
             self.i = new_i
             self.j = new_j
     

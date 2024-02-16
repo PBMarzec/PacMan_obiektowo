@@ -85,6 +85,8 @@ class Board():
     
     def UpdateBoard(self,pacman_obiect):
         for monster in self.__active_monster:
+            self.__map(monster.j,monster.i).type = "Monster"
+            self.__map(monster.old_pos[0],monster.old_pos[1]).type = "Path"
             if monster.j == pacman_obiect.j and monster.i == pacman_obiect.i:
                 self.Colitions(pacman_obiect,monster)
         for food in self.__active_food:
@@ -94,6 +96,7 @@ class Board():
             if food.j == pacman_obiect.j and food.i == pacman_obiect.i:
                 self.Colitions(pacman_obiect,food)
         self.__map(pacman_obiect.j,pacman_obiect.i).type = "PacMan"
+        self.__map(pacman_obiect.old_pos[0],pacman_obiect.old_pos[1]).type = "Path"
         self.__PacManPossition = [pacman_obiect.j,pacman_obiect.i]
              
         
