@@ -49,8 +49,6 @@ class Board():
             self.__map.append((one_map_row))
     
     def ImportMap(self,map_list,pacman:Sprites.PacMan)->list[list]:
-        
-        
         for indexcol, line in enumerate(map_list):
             one_line = list(line)
             one_map_row = []
@@ -85,8 +83,20 @@ class Board():
                 self.__screen.blit(col.pic,(indexc*20,indexr*20))
         pygame.display.flip()
     
-    def UpdateBoard(self):
-        pass
+    def UpdateBoard(self,pacman_obiect):
+        for monster in self.__active_monster:
+            if monster.j == pacman_obiect.j and monster.i == pacman_obiect.i:
+                self.Colitions(pacman_obiect,monster)
+        for food in self.__active_food:
+            if food.j == pacman_obiect.j and food.i == pacman_obiect.i:
+                self.Colitions(pacman_obiect,food)
+        for food in self.__active_food:
+            if food.j == pacman_obiect.j and food.i == pacman_obiect.i:
+                self.Colitions(pacman_obiect,food)
+        self.__map(pacman_obiect.j,pacman_obiect.i).type = "PacMan"
+        self.__PacManPossition = [pacman_obiect.j,pacman_obiect.i]
+             
+        
     
     @staticmethod
     def send_gameover():
@@ -131,6 +141,7 @@ class Board():
             food_obiect.SpeedUpPacman(pacman_obiect) 
         elif food_obiect.check_booster_effect() == "SickMonster":
             food_obiect.SickMonster(monster_set=monster_set) 
+        
     
     
     def ColectCoin(self):

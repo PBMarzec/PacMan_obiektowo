@@ -8,6 +8,7 @@ class ISprites(ABC):
     def __init__(self,i,j) -> None:
         self.i = i
         self.j = j
+        self.old_pos = []
   
 class MovebleSprite(ISprites):
     def __init__(self,x,y) -> None:
