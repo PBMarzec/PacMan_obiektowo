@@ -44,7 +44,7 @@ if __name__ == "__main__":
         else:
             loopcounter += 1
         
-        Map.UpdateBoard()
+        Map.UpdateBoard(PacMan)
         
          
     # Done! Time to quit.

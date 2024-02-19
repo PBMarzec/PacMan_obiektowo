@@ -86,9 +86,10 @@ class NoneMovebleSprite(ISprites):
         
 class Booster(NoneMovebleSprite):
     booster_name_list = ["SpeedUpPacman","SickMonster"]
-    def __init__(self,x,y, booster_effect_name:str) -> None:
+    
+    def __init__(self,x,y,) -> None:
         super().__init__(x,y) 
-        self.__booster_effect = booster_effect_name
+        self.__booster_effect = random.choice(self.booster_name_list)
     
     @property
     def check_booster_effect(self):

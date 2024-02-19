@@ -64,9 +64,7 @@ class Board():
                     pacman.i = indexcol
                     pacman.i = indexrow
                 elif one_tile.type == 'Food':
-                    self.__active_food.append((Sprites.Booster(indexrow,
-                                                                        indexcol,
-                                                                        random(Sprites.Booster.booster_name_list))))
+                    self.__active_food.append((Sprites.Booster(indexrow, indexcol)))
                 elif one_tile.type == 'Coin':
                     self.__active_coins.append((Sprites.Coin(indexrow,indexcol)))
             self.__map.append((one_map_row))
@@ -193,20 +191,25 @@ class Board():
         distance = math.sqrt((self.__PacManPossition[0]-x)**2+(self.__PacManPossition[1]-y)**2)
         return distance
     
-class OneTile_copy:
-    def __init__(self,tile_type:str,board_mode="normal") -> None:
-        self.type = tile_type
+class OneTile:
+    TypeOfTiles = {"#":"Wall",
+                    "P":"PacMan",
+                    "F":"Food",
+                    "M":"Monster",
+                    " ":"Coin"}
+    normal_pic_dict = {"Wall":"./pic/normal_wall.jpg",
+                        "PacMan":"./pic/normal_pacman.jpg",
+                        "Food":"./pic/normal_food.jpg",
+                        "Monster":"./pic/normal_monster.jpg",
+                        "Path":"./pic/normal_path.jpg",
+                        "Coin":"./pic/normal_coin.jpg"}
+    def __init__(self,tile_string:str,board_mode="normal") -> None:
+        self.type = self.TypeOfTiles[tile_string]
         self.pic = ""
         self.board_mode = board_mode
         
         if self.board_mode == "normal":
-            normal_pic_dict = {"Wall":"./pic/normal_wall.jpg",
-                               "PacMan":"./pic/normal_pacman.jpg",
-                                "Food":"./pic/normal_food.jpg",
-                                "Monster":"./pic/normal_monster.jpg",
-                                "Path":"./pic/normal_path.jpg",
-                                "Coin":"./pic/normal_coin.jpg"}
-            self.pic = pygame.image.load(normal_pic_dict[self.type])
+            self.pic = pygame.image.load(self.normal_pic_dict[self.type])
     
     def update_pic(self):
         old_type = self.normal_pic_dict.keys()[self.pic]
@@ -215,7 +218,7 @@ class OneTile_copy:
 
  
         
-class OneTile:
+class OneTile_copy:
     TypeOfTiles = {"#":"Wall",
                     "P":"PacMan",
                     "F":"Food",
@@ -266,8 +269,7 @@ class OneTile:
 
 
 class PictureClass:
-    def __init__(self,pic_type:str,pic_path:str) -> None:
-        self.type = pic_type
+    def __init__(self,pic_path:str) -> None:
         self.pic = pygame.image.load(pic_path)    
         
 class WallPic(PictureClass):
