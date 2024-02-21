@@ -22,30 +22,41 @@ if __name__ == "__main__":
 
     # Run until the user asks to quit
     running = True
-    PacMan = Sprites.PacMan
+    PacMan = Sprites.PacMan(0,0)
     Map = Board.Board(map_list=map_lines,Pacman=PacMan,screen=screen)
     Map.DrowBoard()
 
     loopcounter = 0
     while running:
         Map.DrowBoard()    
-        # Did the user click the window close button?
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                Map.Print_Total_score()
             elif event.type == pygame.KEYDOWN:
                 pressed_keys = pygame.key.get_pressed()
-                PacMan.move_pacman(PacMan,pressed_keys=pressed_keys)
-        
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    Map.Print_Total_score()
+                if event.key == pygame.K_UP:
+                    PacMan.move([0,-1],Map)
+                if event.key == pygame.K_DOWN:
+                    PacMan.move([0, 1],Map)
+                if event.key == pygame.K_LEFT:
+                    PacMan.move([-1, 0],Map)
+                if event.key == pygame.K_RIGHT:
+                    PacMan.move([1, 0],Map)
+                    
         if loopcounter == 10:
             for monster in Map.active_monster:
                 monster.move(Sprites.Monster.MoveStrategy(self=monster,board=Map),Map)
             loopcounter = 0
         else:
             loopcounter += 1
-        
         Map.UpdateBoard(PacMan)
+        Map.Print_Total_score()
         
          
     # Done! Time to quit.
+    Map.Print_Total_score()
     pygame.quit()

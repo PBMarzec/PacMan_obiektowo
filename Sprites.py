@@ -12,37 +12,37 @@ class ISprites(ABC):
 class MovebleSprite(ISprites):
     def __init__(self,x,y) -> None:
         super().__init__(x,y)
-        self.old_pos = []
+        self.old_pos = [x,y]
     
     def move(self,vec,board:Board):
         new_i = self.i + vec[0]
         new_j = self.j + vec[1]
         move_is_possible = board.CanIMoveThere(new_i,new_j)
         if move_is_possible:
-            self.old_pos = deepcopy[self.i, self.j]
-            self.i = new_i
-            self.j = new_j
+            self.old_pos = deepcopy([self.i, self.j])
+            self.i = int(new_i)
+            self.j = int(new_j)
     
       
 class PacMan(MovebleSprite):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self,x,y) -> None:
+        super().__init__(x,y)
         self.live_points = 3
         self.status = "normal"
                     
-    def move_pacman(self,pressed_keys:pygame.key):
+    def move_pacman(self,pressed_keys:pygame.key,map:Board):
         # checking if key "A" was pressed
         if pressed_keys == pygame.K_UP:
-            self.move(0, 1)
+            self.move([0, 1],map)
         # checking if key "J" was pressed
         if pressed_keys == pygame.K_DOWN:
-            self.move(0, -1)
+            self.move([0, -1],map)
         # checking if key "P" was pressed
         if pressed_keys == pygame.K_LEFT:
-            self.move(-1, 0)
+            self.move([-1, 0],map)
         # checking if key "M" was pressed
         if pressed_keys == pygame.K_RIGHT:
-            self.move(1, 0)
+            self.move([1, 0],map)
     
 class Monster(MovebleSprite):
     def __init__(self,x,y,strategy="random") -> None:
@@ -89,11 +89,12 @@ class Booster(NoneMovebleSprite):
     
     def __init__(self,x,y,) -> None:
         super().__init__(x,y) 
-        self.__booster_effect = random.choice(self.booster_name_list)
+        self.__booster_effect = deepcopy(random.choice(self.booster_name_list))
     
     @property
     def check_booster_effect(self):
-        return self.__booster_effec
+        print(self.__booster_effect)
+        return self.__booster_effect
     
     def SpeedUpPacman(self,pacman:PacMan):
         pass
