@@ -17,6 +17,7 @@ class Board():
         self.__active_food = []
         self.__active_coins = []
         self.__Total_points = 0
+        self.__game_running = True
     
         self.ImportMap(map_list,Pacman)
     
@@ -80,12 +81,32 @@ class Board():
                 self.__screen.blit(col.pic,(indexc*20,indexr*20))
         pygame.display.flip()
     
+    def DrawGameOver(self):
+        # darkblue = (0, 0, 139, 255)
+        # white = (255, 255, 255, 255)
+        self.__screen.fill("darkblue")
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render(f"Game Over \n Total Score: {self.__Total_points}", True, "white")
+        textRect = text.get_rect()
+        textRect.center = (len(self.__map[1])*20//2, len(self.__map)*20//2)
+        self.__screen.blit(text, textRect)
+        # self.__screen.draw_text(f"Game Over\nTotal Score: {self.__Total_points}", white)
+        # text_surface = FONT.render("Press space bar to play again", True, WHITE)
+        # self.screen.blit(text_surface, (WIDTH / 2, HEIGHT * 7 / 8))
+        pygame.display.flip()
+
+    
+    
+    
     def UpdateBoard(self,pacman_obiect):
         print(f"\nUpdateBoard: number of rows: {len(self.__map)}, number of columnes: {len(self.__map[1])}")
         
         for monster in self.__active_monster:
             print (f"Monster: {self.__active_monster.index(monster)}, monster.j: {monster.j}, monster.i: {monster.i} ")
-            self.__map[monster.j][monster.i].update_pic("Monster")
+            if monster.status == "normal":
+                self.__map[monster.j][monster.i].update_pic("Monster")
+            elif monster.status == "edible":
+                self.__map[monster.j][monster.i].update_pic("Monster_sick")
             for coin in self.__active_coins:
                 if coin.i == monster.old_pos[0] and coin.j == monster.old_pos[1]:
                     self.__map[monster.old_pos[1]][monster.old_pos[0]].update_pic("Coin")
@@ -99,25 +120,24 @@ class Board():
         for food in self.__active_food:
             if food.i == pacman_obiect.i and food.j == pacman_obiect.j :
                 self.Colitions(pacman_obiect,food)
-                
-        for coin in self.__active_coins:
-            if coin.i == pacman_obiect.i and coin.j == pacman_obiect.j :
-                print(f"len(self.__active_coins): {len(self.__active_coins)}")
-                self.Colitions(pacman_obiect,coin)
-                print(f"len(self.__active_coins): {len(self.__active_coins)}")
+        if len(self.__active_coins)>0:
+            for coin in self.__active_coins:
+                if coin.i == pacman_obiect.i and coin.j == pacman_obiect.j :
+                    print(f"len(self.__active_coins): {len(self.__active_coins)}")
+                    self.Colitions(pacman_obiect,coin)
+                    print(f"len(self.__active_coins): {len(self.__active_coins)}")
+        else:
+            self.__game_running = False
                 
         print (f"PacMan: pacman.j: {pacman_obiect.j}, pacman.i: {pacman_obiect.i} ")
         print (f"PacMan: pacman.old_j: {pacman_obiect.old_pos[1]}, pacman.old_i: {pacman_obiect.old_pos[0]} ")
         self.__map[pacman_obiect.j][pacman_obiect.i].update_pic("PacMan")
         self.__map[pacman_obiect.old_pos[1]][pacman_obiect.old_pos[0]].update_pic("Path")
         self.__PacManPossition = [pacman_obiect.j,pacman_obiect.i]
-    
-    
-    @staticmethod
-    def send_gameover():
-        main.running = False
-        print("------------------GAME OVER--------------------")
-        
+        if self.__game_running:
+            return "game"
+        else:
+            return "the end"
         
     @staticmethod
     def determine_which_pacman_monster_food(one_sprite:Sprites.ISprites, 
@@ -158,7 +178,8 @@ class Board():
                           monster_obiect:Sprites.Monster):
         print("!!!!!!!!!!!!!! PacMan_vs_Monster !!!!!!!!!!!!!!!!")
         if monster_obiect.status == "normal":
-            self.send_gameover()     
+            self.__game_running = False
+            print("------------------GAME OVER--------------------")     
         elif monster_obiect.status == "edible":
             index_to_del = self.__active_monster.index(monster_obiect)
             del self.__active_monster[index_to_del]
@@ -168,10 +189,12 @@ class Board():
     def PacMan_vs_Food(self,pacman_obiect:Sprites.PacMan, 
                           food_obiect:Sprites.Booster,
                           monster_set:list[Sprites.Monster]):
-        if food_obiect.check_booster_effect() == "SpeedUpPacman":
+        if food_obiect.check_booster_effect == "SpeedUpPacman":
             food_obiect.SpeedUpPacman(pacman_obiect) 
-        elif food_obiect.check_booster_effect() == "SickMonster":
+        elif food_obiect.check_booster_effect == "SickMonster":
             food_obiect.SickMonster(monster_set=monster_set) 
+        index_to_del = self.__active_food.index(food_obiect)
+        del self.__active_food[index_to_del]
         
     def ColectCoin(self,coin_object):
         self.__Total_points += 1 
@@ -188,7 +211,6 @@ class Board():
         
     def Colitions_old(self,one_sprite, second_sprite):
         pacman_object, monster_object, food_object, coin_object = self.determine_which_pacman_monster_food(one_sprite,second_sprite)
-                
         colition_dict = {("PacMan","Monster"):self.PacMan_vs_Monster(pacman_object,monster_object),
                          ("PacMan","Booster"):self.PacMan_vs_Food(pacman_object,
                                                                   food_object,
@@ -244,12 +266,15 @@ class OneTile:
                     "F":"Food",
                     "M":"Monster",
                     " ":"Coin"}
+    
     normal_pic_dict = {"Wall":"./pic/normal_wall.jpg",
                         "PacMan":"./pic/normal_pacman.jpg",
                         "Food":"./pic/normal_food.jpg",
                         "Monster":"./pic/normal_monster.jpg",
+                        "Monster_sick":"./pic/normal_monster_sick.jpg",
                         "Path":"./pic/normal_path.jpg",
                         "Coin":"./pic/normal_coin.jpg"}
+    
     def __init__(self,tile_string:str,board_mode="normal") -> None:
         self.type = ""
         self.pic = ""

@@ -89,7 +89,8 @@ class Booster(NoneMovebleSprite):
     
     def __init__(self,x,y,) -> None:
         super().__init__(x,y) 
-        self.__booster_effect = deepcopy(random.choice(self.booster_name_list))
+        self.__booster_effect = "SickMonster"
+        # self.__booster_effect = deepcopy(random.choice(self.booster_name_list))
     
     @property
     def check_booster_effect(self):
@@ -100,7 +101,11 @@ class Booster(NoneMovebleSprite):
         pass
     
     def SickMonster(self,monster_set:list[Monster]):
-        pass
+        for monster in monster_set:
+            if monster.status == "normal":
+                monster.status = "edible"
+            elif monster.status == "edible":
+                monster.status = "normal"
         
 class Coin(NoneMovebleSprite):
     def __init__(self,x,y) -> None:
