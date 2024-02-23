@@ -35,8 +35,16 @@ if __name__ == "__main__":
             start_button = font.render('Start', True, (255, 255, 255))
             screen.blit(title, (screen_width/2 - title.get_width()/2, screen_height/2 - title.get_height()/2))
             screen.blit(start_button, (screen_width/2 - start_button.get_width()/2, screen_height/2 + start_button.get_height()/2))
+            start_button_area = [[screen_width/2 - start_button.get_width()/2,screen_width/2 + start_button.get_width()/2],
+                                [screen_height/2 - start_button.get_height()/2,screen_height/2 + start_button.get_height()/2]] 
             pygame.display.update()
-            game_state = "game"
+            for ev in pygame.event.get():  
+                if ev.type == pygame.QUIT:  
+                pygame.quit()  
+                if ev.type == pygame.MOUSEBUTTONDOWN:  
+                      if start_button_area[0][0] <= mouse[0] <= start_button_area[0][1] and start_button_area[1][0] <= mouse[1] <= start_button_area[1][1]:  
+                        pygame.quit()
+                        game_state = "game"
   
         if game_state == "game":
             keys = pygame.key.get_pressed()
