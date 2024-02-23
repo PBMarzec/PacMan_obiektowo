@@ -43,7 +43,6 @@ if __name__ == "__main__":
                 pygame.quit()  
                 if ev.type == pygame.MOUSEBUTTONDOWN:  
                       if start_button_area[0][0] <= mouse[0] <= start_button_area[0][1] and start_button_area[1][0] <= mouse[1] <= start_button_area[1][1]:  
-                        pygame.quit()
                         game_state = "game"
   
         if game_state == "game":
