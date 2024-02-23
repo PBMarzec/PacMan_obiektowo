@@ -40,9 +40,10 @@ if __name__ == "__main__":
             pygame.display.update()
             for ev in pygame.event.get():  
                 if ev.type == pygame.QUIT:  
-                pygame.quit()  
+                    pygame.quit()  
                 if ev.type == pygame.MOUSEBUTTONDOWN:  
-                      if start_button_area[0][0] <= mouse[0] <= start_button_area[0][1] and start_button_area[1][0] <= mouse[1] <= start_button_area[1][1]:  
+                    mouse = pygame.mouse.get_pos() 
+                    if start_button_area[0][0] <= mouse[0] <= start_button_area[0][1] and start_button_area[1][0] <= mouse[1] <= start_button_area[1][1]:  
                         game_state = "game"
   
         if game_state == "game":
